@@ -1,0 +1,41 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    background: black;
+}
+
+canvas{
+    display: block;
+    border: 3px solid white;
+    margin: auto;
+    width: 50%;
+}
+
+button{
+    color: #fefefe;
+    border: 3px solid #fefefe;
+    border-radius: 7px;
+    background: rgba(0,0,0,0.6);
+    font-size: 1.6rem;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    outline: none;
+    text-transform: capitalize;
+    margin: 5px;
+}
+
+#title{
+    color: white;
+    text-align: center;
+    font-size: 3rem;
+    margin: 10px;
+}
+
+#buttons{
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
