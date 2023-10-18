@@ -1,6 +1,10 @@
 const canvas = document.querySelector("#canvas");
 const startBtn = document.querySelector("#startBtn");
 const resetBtn = document.querySelector("#resetBtn");
+const status = document.querySelector("#status")
+
+const maxX = 50;
+const maxY = 50;
 
 var gfx = canvas.getContext("2d");
 
@@ -13,72 +17,119 @@ let running = false;
 
 class Display {
     constructor(x, y){
+        this.width = x;
+        this.height = y;
         this.bitmap = new Array(x*y)
         this.lock = false;
+        this.scale = 1;
+        status.innerHTML = "object created";
+        this.clear([0, 0, 0])
+        console.log(this.bitmap)
     }
 
     start(){
         if(!running){
-            myInterval = setInterval(updateCanvas, 30)
+            myInterval = setInterval(this.render, 30)
             running = true;
         }
     }
 
     clear(color){
-        clearInterval(myInterval);
-        running = false;
-        gfx.fillStyle = color;
-        gfx.fillRect(0, 0, canvas.width, canvas.height);
-        this.bitmap = [];
+        for(let x=0; x<this.width; x++){
+            for(let y = 0; y < this.height; y++){
+                this.bitmap[y*this.width+x] = color;
+            }
+        }
+        
     }
 
-    updateCanvas(){
-        console.log("hi")
+    render(){
+        let w = window.innerWidth -100;
+        let h = window.innerHeight -200;
+        let sx = Math.floor(w/this.width);
+        let sy = Math.floor(h/this.height);
+        this.scale = (sx < sy)?sx:sy;
+        canvas.width = this.width * this.scale;
+        canvas.height = this.height * this.scale;
+        this.draw()
+        status.innerHTML = `
+        ${w}, ${h}
+        `
     }
 
     putPixel(x, y, color){
-        this.bitmap.push([{
-            cordinateX: x,
-            cordinateY: y,
-            color: color
-        }]);
+        this.bitmap[y*this.width+x] = color;
+        console.log(this.bitmap);
     }
 
     rectangle(x1, y1, x2, y2, color){
-        let width = Math.abs(x2 - x1);
-        let height = Math.abs(y2 - y1);
+        if(x1 > x2){
+            let a = x1;
+            x1 = x2;
+            x2 = a;
+        }
 
-        let x = Math.min(x1, x2);
-        let y = Math.min(y1, y2);
+        if(y1 > y2){
+            let a = y1;
+            y1 = y2;
+            y2 = a;
+        }
 
-        gfx.strokeStyle = color;
-        gfx.lineWidth = 2;
-        
-        gfx.strokeRect(x, y, width, height);
+        for(let x = x1; x <= x2; x++){
+            this.bitmap[y1*this.width+x] = color;
+        }
+
+        for(let x = x1; x <= x2; x++){
+            this.bitmap[y2*this.width+x] = color;
+        }
+
+        for(let y = y1; y <= y2; y++){
+            this.bitmap[y*this.width+x1] = color;
+        }
+
+        for(let y = y1; y <= y2; y++){
+            this.bitmap[y*this.width+x2] = color;
+        }
+
+
+        /*
+        for(let x = x1; x <= x2; x++){
+            for(let y = y1; y <= y2; y++){
+                if()
+                this.bitmap[y*this.width+x] = color;
+            }
+        }*/
     }
 
     line(x1, y1, x2, y2, color){
-        gfx.lineWidth = 2;
-        gfx.strokeStyle = color;
-
-        gfx.moveTo(x1, y1);
-        gfx.lineTo(x2, y2);
-        gfx.stroke();
+        
     }
 
     circle(x, y, r, color){
-        gfx.strokeStyle = color
-        gfx.beginPath();
-        gfx.arc(x, y, r, 0, 360)
-        gfx.stroke();
+        
+    }
+
+    draw(){
+        let c;
+        for(let x=0; x<this.width; x++){
+            for(let y = 0; y < this.height; y++){
+                let c = this.bitmap[y*this.width+x]
+                gfx.fillStyle = `rgb(${c[0]}, ${c[1]}, ${c[2]})`
+                gfx.fillRect(x*this.scale, y*this.scale, this.scale, this.scale);
+            }
+        }
     }
 }
 
-let display = new Display(40, 40);
-display.putPixel(10, 10, "blue")
-display.clear("darkgreen")
-display.line(500,20,50,200, "blue")
-display.rectangle(50,50,500,200, "red")
-display.circle(50, 50, 50, "red")
+let display = new Display(maxX, maxY);
 
-console.log(display.bitmap)
+setInterval(rend, 30);
+
+function rend(){
+    display.render()
+}
+
+//--------------------------------------------TEST AREA--------------------------------------------------------
+
+display.putPixel(4, 4, [100,100,100])
+display.rectangle(20, 20, 10, 10, [200, 20, 105])
