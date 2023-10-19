@@ -137,6 +137,12 @@ class Display {
         }
     }
 
+    verticalLine(x, color){
+        for(let y = 0; y < this.height; y++){
+            this.bitmap[y*this.width+x] = color;
+        }
+    }
+
     circle(centerX, centerY, r, color) {
         if (centerX + r >= this.width ||
             centerY + r >= this.height ||
@@ -201,7 +207,7 @@ class Display {
     }
 
     scrollUp(){
-        for (let y = this.height-1; y >= 0; y--) {
+        for (let y = this.height-1; y > 0; y--) {
             for (let x = 0; x < this.width; x++) {
                 this.bitmap[y * this.width + x] = this.bitmap[((y-1) * this.width + x)]
             }
@@ -210,21 +216,32 @@ class Display {
         status.innerHTML += "<br>" + `Bitmap scrolled up by 1 pixel`
     }
 
-    scrollRight(){
-        for (let x = this.width-1; x >= 0; x--) {
+    scrollLeft(){
+        for (let x = this.width-1; x > 0; x--) {
             for (let y = 0; y < this.height; y++) {
                 this.bitmap[y * this.width + x] = this.bitmap[y * this.width + (x-1)]
             }
         }
-        status.innerHTML += "<br>" + `Bitmap scrolled right by 1 pixel`
+        this.verticalLine(0, [0, 0, 0])
+        status.innerHTML += "<br>" + `Bitmap scrolled left by 1 pixel`
+    }
+
+    scrollRight(){
+        for(let x = 0; x < this.width-1; x++){
+            for(let y = 0; y < this.height; y++){
+                this.bitmap[y * this.width + x] = this.bitmap[y * this.width + (x+1)];
+            }
+        }
+        this.verticalLine(this.width-1, [0, 0, 0]);
+        status.innerHTML += "<br>" + `Bitmap scrolled right by 1 pixel`;
     }
 
     draw() {
         let c;
         for (let x = 0; x < this.width; x++) {
             for (let y = 0; y < this.height; y++) {
-                let c = this.bitmap[y * this.width + x]
-                gfx.fillStyle = `rgb(${c[0]}, ${c[1]}, ${c[2]})`
+                let c = this.bitmap[y * this.width + x];
+                gfx.fillStyle = `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
                 gfx.fillRect(x * this.scale, y * this.scale, this.scale, this.scale);
             }
         }
@@ -236,17 +253,17 @@ let display = new Display(maxX, maxY);
 setInterval(rend, 30);
 
 function rend() {
-    display.render()
+    display.render();
 }
 
 //--------------------------------------------TEST AREA--------------------------------------------------------
 
-display.putPixel(4, 4, [100, 100, 100])
-display.rectangle(40, 0, 10, 10, [200, 20, 105])
-//display.resize(100, 100)
+display.putPixel(4, 4, [100, 100, 100]);
+display.rectangle(0, 0, 49, 49, [200, 20, 105]);
+//display.resize(100, 100);
 display.line(40, 8, 10, 27, [60, 240, 150])
 display.circle(30, 30, 19, [255, 0, 0]);
-display.scrollDown()
-display.scrollUp()
-display.scrollRight
-
+//display.scrollDown();
+//display.scrollUp();
+//display.scrollRight();
+//display.scrollLeft();
