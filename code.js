@@ -16,13 +16,14 @@ class Display {
         this.width = x;
         this.height = y;
         this.bitmap = new Array(x * y)
+        this.buffer = new Array(this.width * this.height).fill([0, 0, 0]);
         this.lock = false;
         this.scale = 1;
         status.innerHTML = "object created";
         this.clear([0, 0, 0])
         console.log(this.bitmap)
     }
-
+    
     start() {
         if (!running) {
             myInterval = setInterval(this.render, 30)
@@ -196,44 +197,92 @@ class Display {
 
     }
 
-    scrollDown(){
+    scrollUp(){
         for (let y = 1; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 this.bitmap[(y-1) * this.width + x] = this.bitmap[(y * this.width + x)]
             }
         }
         this.horizontalLine(this.height-1, [0, 0, 0])
-        status.innerHTML += "<br>" + `Bitmap scrolled down by 1 pixel`
+        status.innerHTML += "<br>" + `Bitmap moved up by 1 pixel`
     }
 
-    scrollUp(){
+    scrollDown(){
         for (let y = this.height-1; y > 0; y--) {
             for (let x = 0; x < this.width; x++) {
                 this.bitmap[y * this.width + x] = this.bitmap[((y-1) * this.width + x)]
             }
         }
         this.horizontalLine(0, [0, 0, 0])
-        status.innerHTML += "<br>" + `Bitmap scrolled up by 1 pixel`
+        status.innerHTML += "<br>" + `Bitmap moved down by 1 pixel`
     }
 
-    scrollLeft(){
+    scrollRight(){
         for (let x = this.width-1; x > 0; x--) {
             for (let y = 0; y < this.height; y++) {
                 this.bitmap[y * this.width + x] = this.bitmap[y * this.width + (x-1)]
             }
         }
         this.verticalLine(0, [0, 0, 0])
-        status.innerHTML += "<br>" + `Bitmap scrolled left by 1 pixel`
+        status.innerHTML += "<br>" + `Bitmap moved right by 1 pixel`
     }
 
-    scrollRight(){
+    scrollLeft(){
         for(let x = 0; x < this.width-1; x++){
             for(let y = 0; y < this.height; y++){
                 this.bitmap[y * this.width + x] = this.bitmap[y * this.width + (x+1)];
             }
         }
         this.verticalLine(this.width-1, [0, 0, 0]);
-        status.innerHTML += "<br>" + `Bitmap scrolled right by 1 pixel`;
+        status.innerHTML += "<br>" + `Bitmap moved left by 1 pixel`;
+    }
+
+    preserveScrollUp(){
+        let tempRow = new Array(this.width);
+        for (let y = 1; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                if(y == 1){
+                    tempRow[x] = this.bitmap[(y-1) * this.width + x];
+                }
+                this.bitmap[(y-1) * this.width + x] = this.bitmap[(y * this.width + x)]
+            }
+        }
+        for(let x = 0; x < this.width; x++){
+            this.bitmap[(this.height-1) * this.width + x] = tempRow[x];
+        }
+        status.innerHTML += "<br>" + `Bitmap moved up by 1 pixel`
+    }
+
+    preserveScrollDown(){
+        let tempRow = new Array(this.width);
+        for (let y = this.height-1; y > 0; y--) {
+            for (let x = 0; x < this.width; x++) {
+                if(y == this.height-1){
+                    tempRow[x] = this.bitmap[y * this.width + x];
+                }
+                this.bitmap[y * this.width + x] = this.bitmap[((y-1) * this.width + x)]
+            }
+        }
+        for(let x = 0; x < this.width; x++){
+            this.bitmap[0 * this.width + x] = tempRow[x];
+        }
+        status.innerHTML += "<br>" + `Bitmap moved down by 1 pixel`
+    }
+
+    preserveScrollRight(){
+        let tempRow = new Array(this.height);
+        for (let x = this.width-1; x > 0; x--) {
+            for (let y = 0; y < this.height; y++) {
+                if(x == this.width-1){
+                    tempRow[y] = this.bitmap[y * this.width + x];
+                }
+                this.bitmap[y * this.width + x] = this.bitmap[y * this.width + (x-1)]
+            }
+        }
+        for(let y = 0; y < this.height; y++){
+            this.bitmap[y * this.width + 0] = tempRow[y];
+        }
+        status.innerHTML += "<br>" + `Bitmap moved right by 1 pixel`
     }
 
     draw() {
@@ -267,3 +316,6 @@ display.circle(30, 30, 19, [255, 0, 0]);
 //display.scrollUp();
 //display.scrollRight();
 //display.scrollLeft();
+//display.preserveScrollUp();
+//display.preserveScrollDown();
+//display.preserveScrollRight();
