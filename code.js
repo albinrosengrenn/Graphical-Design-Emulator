@@ -285,6 +285,24 @@ class Display {
         status.innerHTML += "<br>" + `Bitmap moved right by 1 pixel`
     }
 
+    preserveScrollLeft(){
+        let tempRow = new Array(this.height);
+        for (let x = 0; x < this.width-1; x++) {
+            for (let y = 0; y < this.height; y++) {
+                if(x == 0){
+                    tempRow[y] = this.bitmap[y * this.width + 0];
+                }
+                this.bitmap[y * this.width + x] = this.bitmap[y * this.width + (x+1)];
+            }
+        }
+        for(let y = 0; y < this.height; y++){
+            this.bitmap[y * this.width + this.width-1] = tempRow[y];
+        }
+        console.log(tempRow)
+        status.innerHTML += "<br>" + `Bitmap moved left by 1 pixel`
+    }
+
+
     draw() {
         let c;
         for (let x = 0; x < this.width; x++) {
@@ -319,3 +337,4 @@ display.circle(30, 30, 19, [255, 0, 0]);
 //display.preserveScrollUp();
 //display.preserveScrollDown();
 //display.preserveScrollRight();
+//display.preserveScrollLeft();
