@@ -695,52 +695,36 @@ class Display {
         status.innerHTML += "<br>" + `Bitmap moved left by 1 pixel`
     }
 
-    textOut(x, y, color, string){
+    textOut(x, y, color, string, fill){
         Array.from(string).forEach(character => {
             let index = chars.findIndex(object => {
                 return object.char === character;
             })
             if(index >= 0){
-                this.blitToDisplay(chars[index].charcode, charWidth, charHeight, 0, 0, x, y, color)
+                this.blitToDisplay(chars[index].charcode, charWidth, charHeight, 0, 0, x, y, color, fill)
             }
             x += charWidth;
         })
     }
 
-    textOutFill(x, y, color, string){
-        Array.from(string).forEach(character => {
-            let index = chars.findIndex(object => {
-                return object.char === character;
-            })
-            if(index >= 0){
-                this.blitToDisplayFill(chars[index].charcode, charWidth, charHeight, 0, 0, x, y, color)
-            }
-            x += charWidth;
-        })
-    }
-
-    blitToDisplay(BM, w, h, bx, by, dx, dy, color){
+    blitToDisplay(BM, w, h, bx, by, dx, dy, color, fill){
         for(let row = bx; row < w; row++){
             for(let col = by; col < h; col++){
-                if(BM[col * w + row] == 1){
-                    this.bitmap[(col+dy) * this.width + (row+dx)] = color;
-                }
-            }
-        }
-    }
-
-    blitToDisplayFill(BM, w, h, bx, by, dx, dy, color){
-        for(let row = bx; row < w; row++){
-            for(let col = by; col < h; col++){
-                if(BM[col * w + row] == 1){
-                    this.bitmap[(col+dy) * this.width + (row+dx)] = color;
+                if(fill){
+                    if(BM[col * w + row] == 1){
+                        this.bitmap[(col+dy) * this.width + (row+dx)] = color;
+                    } else{
+                        this.bitmap[(col+dy) * this.width + (row+dx)] = [0, 0, 0];
+                    }
                 } else {
-                    this.bitmap[(col+dy) * this.width + (row+dx)] = [0, 0, 0];
+                    if(BM[col * w + row] == 1){
+                        this.bitmap[(col+dy) * this.width + (row+dx)] = color;
+                    }
                 }
             }
         }
     }
-
+    
     draw() {
         let c;
         for (let x = 0; x < this.width; x++) {
@@ -777,4 +761,4 @@ display.circle(30, 30, 19, [255, 0, 0]);
 //display.preserveScrollRight();
 //display.preserveScrollLeft();
 //display.textOut(10, 10, [100, 255, 60], "HEJ")
-display.textOutFill(20, 10, [100, 255, 60], "9A9")
+display.textOut(20, 10, [100, 255, 60], "9A9", true)
