@@ -288,6 +288,17 @@ const chars =   [{
                                0, 0, 0, 0, 0, 0]
                 },
                 {
+                    char: "a",
+                    charcode: [0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0,
+                               0, 1, 1, 1, 0, 0,
+                               0, 0, 0, 0, 1, 0,
+                               0, 1, 1, 1, 1, 0,
+                               1, 0, 0, 0, 1, 0,
+                               0, 1, 1, 1, 1, 0,
+                               0, 0, 0, 0, 0, 0]
+                },
+                {
                     char: "1",
                     charcode: [0, 0, 1, 0, 0, 0,
                                0, 1, 1, 0, 0, 0,
@@ -490,6 +501,12 @@ class Display {
             }
             status.innerHTML += "<br>" + `Rectangle created from (${x1}, ${y1}) to (${x2}, ${y2})`;
         }
+    }
+
+    triangle(x1, x2, y1, y2, z1, z2, color){
+        this.line(x1, x2, y1, y2, color);
+        this.line(y1, y2, z1, z2, color);
+        this.line(z1, z2, x1, x2, color);
     }
 
     line(x1, y1, x2, y2, color) {
@@ -749,9 +766,9 @@ function rend() {
 
 display.putPixel(4, 4, [100, 100, 100]);
 display.rectangle(0, 0, 49, 49, [200, 20, 105]);
-//display.resize(100, 100);
 display.line(40, 8, 10, 27, [60, 240, 150])
 display.circle(30, 30, 19, [255, 0, 0]);
+display.resize(300, 300);
 //display.scrollDown();
 //display.scrollUp();
 //display.scrollRight();
@@ -760,5 +777,5 @@ display.circle(30, 30, 19, [255, 0, 0]);
 //display.preserveScrollDown();
 //display.preserveScrollRight();
 //display.preserveScrollLeft();
-//display.textOut(10, 10, [100, 255, 60], "HEJ")
-display.textOut(20, 10, [100, 255, 60], "9A9", true)
+display.triangle(100, 100, 200, 200, 50, 180, [104, 67, 204])
+display.textOut(20, 10, [100, 255, 60], "abcdefghijklmnopqrstuvwxyz", true)
