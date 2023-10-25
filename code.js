@@ -412,8 +412,8 @@ const chars =   [{
 
 const charWidth = 6;
 const charHeight = 8;
-const maxX = 50;
-const maxY = 50;
+const maxX = 300;
+const maxY = 300;
 
 var gfx = canvas.getContext("2d");
 
@@ -467,7 +467,7 @@ class Display {
         //status.innerHTML += `Pixel created at (${x}, ${y})`;
     }
 
-    rectangle(x1, y1, x2, y2, color) {
+    rectangle(x1, y1, x2, y2, color, fill) {
         if (x1 > x2) {
             let a = x1;
             x1 = x2;
@@ -489,7 +489,13 @@ class Display {
             y1 < 0 ||
             y2 < 0) {
             status.innerHTML += "<br>" + "Rectangle parameters are out of bounds";
-        } else {
+        } else if(fill){
+            for(let x = x1; x <= x2; x++){
+                for(let y = y1; y <= y2; y++){
+                    this.putPixel(x, y, color);
+                }
+            }
+        } else{
             for (let x = x1; x <= x2; x++) {
                 this.putPixel(x, y1, color);
                 this.putPixel(x, y2, color);
@@ -765,10 +771,10 @@ function rend() {
 //--------------------------------------------TEST AREA--------------------------------------------------------
 
 display.putPixel(4, 4, [100, 100, 100]);
-display.rectangle(0, 0, 49, 49, [200, 20, 105]);
+display.rectangle(0, 0, 49, 49, [200, 20, 105], true);
 display.line(40, 8, 10, 27, [60, 240, 150])
 display.circle(30, 30, 19, [255, 0, 0]);
-display.resize(300, 300);
+//display.resize(300, 300);
 //display.scrollDown();
 //display.scrollUp();
 //display.scrollRight();
