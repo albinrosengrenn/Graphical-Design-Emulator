@@ -766,10 +766,10 @@ class Display {
         let v1 = Math.acos(x/d);
         console.log(v1)
         v = v * (Math.PI / 180);
-        v = v1 + v;
+        //v = v1 + v;
         console.log(v)
-        x = Math.round(Math.cos(v) - y * Math.sin(v) + y);
-        y = Math.round(Math.sin(v) + y * Math.sin(v) - x);
+        x = Math.round(x * Math.cos(v) - y * Math.sin(v));
+        y = Math.round(d * Math.sin(v) + y * Math.sin(v));
         return [x, y];
     }
     
