@@ -420,6 +420,8 @@ var gfx = canvas.getContext("2d");
 let myInterval;
 let running = false;
 
+let degrees = 0;
+
 class Display {
     constructor(x, y) {
         this.width = x;
@@ -445,7 +447,7 @@ class Display {
                 this.bitmap[y * this.width + x] = color;
             }
         }
-        status.innerHTML += "<br>" + "canvas cleared";
+        //status.innerHTML += "<br>" + "canvas cleared";
     }
 
     render() {
@@ -456,11 +458,23 @@ class Display {
         this.scale = (sx < sy) ? sx : sy;
         canvas.width = this.width * this.scale;
         canvas.height = this.height * this.scale;
+        this.demo()
         this.draw()
         /*status.innerHTML = `
         ${w}, ${h}
         `*/
     }
+
+    demo(){
+        this.clear([0,0,0])
+        if(degrees >=360){
+            degrees = 0
+        }
+        this.rectangle(100, 100, 200, 200, [200, 20, 105], false, degrees)
+        degrees++;
+    }
+
+
 
     putPixel(x, y, color) {
         this.bitmap[y * this.width + x] = color;
@@ -495,20 +509,17 @@ class Display {
             let offsetX = (x2 - x1)/2;
             let offsetY = (y2 - y1)/2;
 
-            let p1 = this.rotate(-offsetX, -offsetY, rot);
-            let p2 = this.rotate(offsetX, -offsetY, rot);
-            let p3 = this.rotate(offsetX, offsetY, rot);
-            let p4 = this.rotate(-offsetX, offsetY, rot);
-
-            console.log(p1, p2, p3, p4)
+            let p1 = this.rotate(-offsetX, -offsetY, rot, (x1+offsetX), (y1+offsetY));
+            let p2 = this.rotate(offsetX, -offsetY, rot, (x1+offsetX), (y1+offsetY));
+            let p3 = this.rotate(offsetX, offsetY, rot, (x1+offsetX), (y1+offsetY));
+            let p4 = this.rotate(-offsetX, offsetY, rot, (x1+offsetX), (y1+offsetY));   
             
-            return;
             this.line(p1[0], p1[1], p2[0], p2[1], color)
             this.line(p2[0], p2[1], p3[0], p3[1], color)
             this.line(p3[0], p3[1], p4[0], p4[1], color)
             this.line(p4[0], p4[1], p1[0], p1[1], color)
 
-            status.innerHTML += "<br>" + `Rectangle created from (${x1}, ${y1}) to (${x2}, ${y2})`;
+            //status.innerHTML += "<br>" + `Rectangle created from (${x1}, ${y1}) to (${x2}, ${y2})`;
         }
     }
 
@@ -551,7 +562,7 @@ class Display {
                 }
             }
             this.putPixel(x2, y2, color);
-            status.innerHTML += "<br>" + `Line created from (${startCoords[0]}, ${startCoords[1]}) to (${startCoords[2]}, ${startCoords[3]})`;
+            //status.innerHTML += "<br>" + `Line created from (${startCoords[0]}, ${startCoords[1]}) to (${startCoords[2]}, ${startCoords[3]})`;
         }
     }
 
@@ -761,15 +772,14 @@ class Display {
         b = temp;
     }
 
-    rotate(x, y, v){
-        let d = Math.sqrt(x*x + y*y);
-        let v1 = Math.acos(x/d);
-        console.log(v1)
-        v = v * (Math.PI / 180);
-        v = v1 + v;
-        console.log(v)
-        x = Math.round(Math.cos(v) - y * Math.sin(v) + y);
-        y = Math.round(Math.sin(v) + y * Math.sin(v) - x);
+    rotate(x, y, v, centerX, centerY){
+        let r = Math.sqrt(x*x + y*y);
+        let angle = Math.atan2(y, x)
+        angle += (v * Math.PI)/180;
+
+        x = Math.round(r * Math.cos(angle) + centerX)
+        y = Math.round(r * Math.sin(angle) + centerY)
+        
         return [x, y];
     }
     
@@ -796,7 +806,7 @@ function rend() {
 //--------------------------------------------TEST AREA------------------------------------
 
 display.putPixel(4, 4, [100, 100, 100]);
-display.rectangle(100, 100, 200, 200, [200, 20, 105], false, 45);
+display.rectangle(100, 100, 200, 200, [200, 20, 105], false, 75);
 //display.line(40, 8, 10, 27, [60, 240, 150])
 display.circle(30, 30, 19, [255, 0, 0]);
 //display.resize(300, 300);
