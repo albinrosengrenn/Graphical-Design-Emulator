@@ -423,7 +423,7 @@ let idleTimer = 0;
 document.addEventListener("mousemove", function(){
     if(!running){
         clearInterval(demoInterval);
-        display.blitToDisplay(display.backup.bitmap, this.width, this.height, 0, 0, 0, 0, [200,0, 100], false, "backup");
+        display.blitToDisplay(display.backup.bitmap, this.width, this.height, 0, 0, 0, 0, [200,0, 100], false);
         console.log(display.backup.bitmap)
         canvasInterval = setInterval(function(){display.render()}, 30);
         running = true;
@@ -808,7 +808,7 @@ class Display {
                 return object.char === character;
             })
             if(index >= 0){
-                this.blitToDisplay(chars[index].charcode, charWidth, charHeight, 0, 0, x, y, color, fill, "numeric")
+                this.blitToDisplay(chars[index].charcode, charWidth, charHeight, 0, 0, x, y, color, fill)
             }
             x += charWidth;
         })
@@ -817,7 +817,7 @@ class Display {
     blitToDisplay(BM, w, h, bx, by, dx, dy, color, fill, type){
         for(let row = bx; row < w; row++){
             for(let col = by; col < h; col++){
-                if(type == "numeric"){
+
                     if(fill){
                         if(BM[col * w + row] == 1){
                             this.bitmap[(col+dy) * this.width + (row+dx)] = color;
@@ -829,10 +829,6 @@ class Display {
                             this.bitmap[(col+dy) * this.width + (row+dx)] = color;
                         }
                     }
-                } else if(type == "backup"){
-                    console.log("BACKUP")
-                    
-                }
             }
         }
     }
