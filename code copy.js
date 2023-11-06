@@ -415,8 +415,8 @@ const charHeight = 8;
 const maxX = 300;
 const maxY = 300;
 
-let canvasInterval;
-let demoInterval = setInterval(function(){display.demo()}, 30);
+let canvasInterval = setInterval(function(){display.render()}, 30);
+let demoInterval;// setInterval(function(){display.demo()}, 30);
 let running = false;
 let idleTimer = 0;
 
@@ -425,7 +425,6 @@ document.addEventListener("mousemove", function(){
         clearInterval(demoInterval);
         display.blitToDisplay(display.backup.bitmap, this.width, this.height, 0, 0, 0, 0, [200,0, 100], false);
         console.log(display.backup.bitmap)
-        canvasInterval = setInterval(function(){display.render()}, 30);
         running = true;
     }
 })

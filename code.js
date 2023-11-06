@@ -416,26 +416,11 @@ const maxX = 300;
 const maxY = 300;
 
 let canvasInterval;
-let demoInterval = setInterval(function(){display.demo()}, 30);
+let demoInterval;
 let running = false;
 let idleTimer = 0;
 
-document.addEventListener("mousemove", function(){
-    if(!running){
-        clearInterval(demoInterval);
-        display.blitToDisplay(display.backup.bitmap, this.width, this.height, 0, 0, 0, 0, [200,0, 100], false, "backup");
-        console.log(display.backup.bitmap)
-        canvasInterval = setInterval(function(){display.render()}, 30);
-        running = true;
-    }
-})
 
-if(idleTimer >= 3000){
-    clearInterval(canvasInterval);
-    demoInterval = setInterval(function(){display.demo()}, 30)
-    running = false;
-    idleTimer = 0;
-}
 
 var gfx = canvas.getContext("2d");
 
@@ -446,19 +431,13 @@ class Display {
     constructor(x, y) {
         this.width = x;
         this.height = y;
-        this.bitmap = new Array(x * y)
+        this.bitmap = new Array (x * y);
+        this.backup = new Array (x * y);
         this.lock = false;
         this.scale = 1;
         status.innerHTML = "object created";
-        this.clear([0, 0, 0])
-        this.backup = new BITMAP(x, y)
-    }
-    
-    start() {
-        if (!running) {
-            myInterval = setInterval(this.render, 30)
-            running = true;
-        }
+        this.clear([0, 0, 0]);
+        this.backup = new BITMAP(x, y);
     }
 
     clear(color) {
@@ -471,16 +450,18 @@ class Display {
     }
 
     render() {
-        /*
-        let w = window.innerWidth - 100;
-        let h = window.innerHeight - 200;
-        let sx = Math.floor(w / this.width);
-        let sy = Math.floor(h / this.height);
-        this.scale = (sx < sy) ? sx : sy;
-        canvas.width = this.width * this.scale;
-        canvas.height = this.height * this.scale;
-        */ 
-        idleTimer += 30;
+        if(!running){
+            idleTimer += 30;
+        }
+        if(idleTimer >= 3000){
+            //clearInterval(canvasInterval);
+            //display.blitToDisplay(display.backup.bitmap, this.width, this.height, 0, 0, 0, 0, [200,0, 100], false, "backup");
+            this.backup = this.bitmap.slice();
+            demoInterval = setInterval(function(){display.demo()}, 30);
+            running = true;
+            idleTimer = 0;
+            console.log(this.backup)
+        }
         this.draw();
         /*status.innerHTML = `
         ${w}, ${h}
@@ -890,22 +871,26 @@ class BITMAP {
 
 let display = new Display(maxX, maxY);
 
+document.addEventListener("mousemove", function(){
+    if(running){
+        clearInterval(demoInterval);
+        display.bitmap = display.backup;
+        canvasInterval = setInterval(function(){display.render()}, 30);
+        running = false;
+    }
+    idleTimer = 0;
+})
+
+let myInterval = setInterval(function(){display.render()}, 30)
+console.log(myInterval)
+
 //--------------------------------------------TEST AREA------------------------------------
 
 display.putPixel(4, 4, [100, 100, 100]);
 display.rectangle(100, 100, 200, 200, [200, 20, 105], false, 75);
-//display.line(40, 8, 10, 27, [60, 240, 150])
+display.line(40, 8, 10, 27, [60, 240, 150])
 display.circle(30, 30, 19, [255, 0, 0]);
 display.backupBitmap()
 console.log(display.backup.bitmap)
-//display.resize(300, 300);
-//display.scrollDown();
-//display.scrollUp();
-//display.scrollRight();
-//display.scrollLeft();
-//display.preserveScrollUp();
-//display.preserveScrollDown();
-//display.preserveScrollRight();
-//display.preserveScrollLeft();
-//display.triangle(100, 100, 200, 200, 50, 180, [104, 67, 204])
+display.triangle(100, 100, 200, 200, 50, 180, [104, 67, 204])
 display.textOut(20, 10, [100, 255, 60], "abcdefghijklmnopqrstuvwxyz", true)
